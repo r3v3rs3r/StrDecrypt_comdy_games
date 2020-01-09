@@ -18,6 +18,7 @@ private static String a(String str) {
 
 private static void doDecrypt(Path filename){
 	Charset charset = StandardCharsets.UTF_8;
+    boolean sameFile = false; // flag for logging strings of the same file
 
 	try {
 	  String content = new String(Files.readAllBytes(filename), charset);
@@ -26,12 +27,16 @@ private static void doDecrypt(Path filename){
 	Matcher regexMatcher = regex.matcher(content);
 
 	while (regexMatcher.find()) {
-    System.out.println("------------------------------------------------------------");
-	System.out.println("path:" + filename);
+	if (!sameFile){
+        System.out.println("==================================================================");
+        System.out.println("path:" + filename);
+        System.out.println();
+        sameFile = true;
+    }
     System.out.println("encrypted: " + regexMatcher.group(1));
-
 	String decrStr  = a(regexMatcher.group(1));
 	System.out.println("decrypted: "+decrStr);
+    System.out.println();
 
     content = content.replace(regexMatcher.group(0), "\""+decrStr+"\"");
     }
