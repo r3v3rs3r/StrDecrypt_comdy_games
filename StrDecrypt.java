@@ -8,7 +8,7 @@ import java.util.regex.*;
 public class StrDecrypt {
 
 // function for string decryption
-public static String a(String str) {
+private static String a(String str) {
     byte[] bytes = str.getBytes();
     for (int i = 0; i < bytes.length; i++) {
         bytes[i] = (byte) (bytes[i] - 2);
@@ -16,7 +16,7 @@ public static String a(String str) {
     return new String(bytes);
 }
 
-public static void doDecrypt(Path filename){
+private static void doDecrypt(Path filename){
 	Charset charset = StandardCharsets.UTF_8;
 
 	try {
@@ -26,10 +26,12 @@ public static void doDecrypt(Path filename){
 	Matcher regexMatcher = regex.matcher(content);
 
 	while (regexMatcher.find()) {
-	    System.out.println("group 1: " + regexMatcher.group(1));
+    System.out.println("------------------------------------------------------------");
+	System.out.println("path:" + filename);
+    System.out.println("encrypted: " + regexMatcher.group(1));
 
 	String decrStr  = a(regexMatcher.group(1));
-	System.out.println(decrStr);
+	System.out.println("decrypted: "+decrStr);
 
     content = content.replace(regexMatcher.group(0), "\""+decrStr+"\"");
     }
@@ -49,16 +51,18 @@ public static void main(String[] args){
      FileVisitor<Path> simpleFileVisitor = new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult preVisitDirectory(Path dir,BasicFileAttributes attrs) {
+        /* for debug
         System.out.println("-------------------------------------");
         System.out.println("DIRECTORY NAME:"+ dir.getFileName() +"\n"+
                            "LOCATION:"+ dir.toFile().getPath());
         System.out.println("-------------------------------------");
+         */
         return FileVisitResult.CONTINUE;
       }
 
       @Override
       public FileVisitResult visitFile(Path visitedFile, BasicFileAttributes fileAttributes) {
-        System.out.println("FILE NAME: "+ visitedFile.getFileName());
+        //System.out.println("FILE NAME: "+ visitedFile.getFileName());
         doDecrypt( visitedFile);
         return FileVisitResult.CONTINUE;
       }
